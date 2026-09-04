@@ -1,0 +1,169 @@
+.reg-page {
+  background: linear-gradient(180deg, #f3eefc 0%, #f7f6fa 260px, #f7f6fa 100%);
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.reg-topbar {
+  max-width: 1000px;
+  margin: 0 auto 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reg-brand img {
+  display: block;
+  height: 56px;
+  width: auto;
+}
+
+.reg-home-btn {
+  border-radius: 30px;
+  font-weight: 600;
+  padding: 7px 20px;
+  background: #6c3fa0;
+  color: #fff;
+  border: none;
+}
+
+.reg-home-btn:hover {
+  background: #5a3385;
+  color: #fff;
+}
+
+.reg-main {
+  flex: 1;
+  padding: 40px 0 60px;
+}
+
+.reg-card {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(63, 30, 95, 0.1);
+  overflow: hidden;
+}
+
+.reg-card-header {
+  background: linear-gradient(120deg, #6c3fa0, #9c5fd6);
+  color: #fff;
+  padding: 30px 40px;
+}
+
+.reg-card-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.reg-card-header p {
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.reg-card-body {
+  padding: 36px 40px 44px;
+}
+
+.reg-section-title {
+  color: #6c3fa0;
+  font-weight: 700;
+  margin-top: 34px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #efe6fa;
+}
+
+.reg-card-body .form-label {
+  font-weight: 600;
+  color: #444;
+  font-size: 14px;
+}
+
+.reg-card-body .form-control,
+.reg-card-body .form-select {
+  border: 1px solid #d9d3e4;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.reg-card-body .form-control:focus {
+  border-color: #9c5fd6;
+  box-shadow: 0 0 0 0.2rem rgba(156, 95, 214, 0.2);
+}
+
+.reg-card-body .form-check-input:checked {
+  background-color: #6c3fa0;
+  border-color: #6c3fa0;
+}
+
+.reg-card-body .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(156, 95, 214, 0.2);
+}
+
+.reg-declaration {
+  background: #f3eefc;
+  border: 1px solid #d5c3ec;
+  padding: 16px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.reg-consents {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.reg-submit-btn {
+  background: linear-gradient(120deg, #6c3fa0, #9c5fd6);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 48px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(108, 63, 160, 0.35);
+}
+
+.reg-submit-btn:hover {
+  color: #fff;
+  filter: brightness(1.05);
+}
+
+.reg-footer {
+  background: #fff;
+  border-top: 1px solid #eee;
+  color: #888;
+  font-size: 13px;
+}
+
+@media (max-width: 767px) {
+  .reg-card-header,
+  .reg-card-body {
+    padding: 24px 20px;
+  }
+
+  .reg-topbar {
+    padding: 0 4px;
+  }
+
+  .reg-brand img {
+    height: 42px;
+  }
+
+  .reg-home-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+}
