@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
       <div class="reg-topbar">
         <a href="index.html" class="reg-brand">
-          <img src="assets/images/06/Logo-Final.png" alt="The Grove">
+          <img src="assets/images/06/Logo-Final.png" alt="The Grove" >
         </a>
         <a href="index.html" class="btn btn-sm reg-home-btn">
           &#8962; Home
