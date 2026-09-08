@@ -3,22 +3,30 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 admin_require_login();
 
-$pdo = get_db();
 $id = (int)($_GET['id'] ?? 0);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status'])) {
-    $status = $_POST['status'];
-    if (in_array($status, ['Under Review', 'Approved', 'Rejected'], true)) {
-        $stmt = $pdo->prepare('UPDATE registrations SET status = :s WHERE id = :id');
-        $stmt->execute(['s' => $status, 'id' => $id]);
+try {
+    $pdo = get_db();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status'])) {
+        $status = $_POST['status'];
+        if (in_array($status, ['Under Review', 'Approved', 'Rejected'], true)) {
+            $stmt = $pdo->prepare('UPDATE registrations SET status = :s WHERE id = :id');
+            $stmt->execute(['s' => $status, 'id' => $id]);
+        }
+        header('Location: view.php?id=' . $id);
+        exit;
     }
-    header('Location: view.php?id=' . $id);
+
+    $stmt = $pdo->prepare('SELECT * FROM registrations WHERE id = :id');
+    $stmt->execute(['id' => $id]);
+    $r = $stmt->fetch();
+} catch (\Throwable $e) {
+    error_log('View DB error: ' . $e->getMessage());
+    http_response_code(503);
+    echo '<p style="font-family:sans-serif;max-width:600px;margin:60px auto;text-align:center;">Unable to reach the database right now. Please try again shortly.</p>';
     exit;
 }
-
-$stmt = $pdo->prepare('SELECT * FROM registrations WHERE id = :id');
-$stmt->execute(['id' => $id]);
-$r = $stmt->fetch();
 
 if (!$r) {
     http_response_code(404);

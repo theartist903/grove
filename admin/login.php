@@ -11,11 +11,15 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = (string)($_POST['password'] ?? '');
-    if (admin_attempt_login($username, $password)) {
-        header('Location: dashboard.php');
-        exit;
+    try {
+        if (admin_attempt_login($username, $password)) {
+            header('Location: dashboard.php');
+            exit;
+        }
+        $error = 'Invalid username or password.';
+    } catch (\RuntimeException $e) {
+        $error = 'Unable to reach the database right now. Please try again shortly, or contact the site administrator.';
     }
-    $error = 'Invalid username or password.';
 }
 ?>
 <!doctype html>

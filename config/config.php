@@ -12,7 +12,7 @@ return [
     ],
 
     'mail' => [
-        'host' => 'mail.thegrove.pk',
+        'host' => 'localhost',
         'port' => 465,
         'username' => 'registration@thegrove.pk',
         'password' => 'Passw903rd',

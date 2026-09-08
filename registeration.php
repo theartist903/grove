@@ -7,6 +7,7 @@ $errors = [];
 $clean = [];
 $submitted = false;
 $parentEmailSent = false;
+$serverError = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = validate_registration($_POST);
@@ -14,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clean = $result['clean'];
 
     if (empty($errors)) {
+      try {
         $pdo = get_db();
         $stmt = $pdo->prepare('INSERT INTO registrations (
             child_name, child_dob, gender, birth_certificate,
@@ -56,7 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params = $clean;
         unset($params['days_required_arr']);
         $stmt->execute($params);
+      } catch (\Throwable $e) {
+        error_log('Registration save failed: ' . $e->getMessage());
+        $serverError = true;
+      }
 
+      if (!$serverError) {
         // Email to parent, only if they gave one
         $parentEmailSent = false;
         if ($clean['parent1_email'] !== '') {
@@ -79,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $submitted = true;
         $clean = [];
+      }
     }
 }
 ?>
@@ -124,6 +132,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <strong>under review</strong>.<?= $parentEmailSent ? " We've emailed you a confirmation." : '' ?>
             </div>
           <?php else: ?>
+            <?php if ($serverError): ?>
+              <div class="alert alert-danger" role="alert">
+                Sorry, something went wrong while saving your registration. Please try again in a moment,
+                or contact us directly if the problem continues.
+              </div>
+            <?php endif; ?>
             <?php if (!empty($errors)): ?>
               <div class="alert alert-danger" role="alert">
                 Please correct the errors highlighted below and resubmit.

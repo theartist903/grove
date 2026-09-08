@@ -46,13 +46,23 @@ function admin_require_login(): void
     }
 }
 
+/**
+ * @throws RuntimeException if the database itself is unreachable/misconfigured
+ *         (as opposed to the credentials simply being wrong).
+ */
 function admin_attempt_login(string $username, string $password): bool
 {
     require_once __DIR__ . '/db.php';
-    $pdo = get_db();
-    $stmt = $pdo->prepare('SELECT id, password_hash FROM admin_users WHERE username = :u');
-    $stmt->execute(['u' => $username]);
-    $row = $stmt->fetch();
+
+    try {
+        $pdo = get_db();
+        $stmt = $pdo->prepare('SELECT id, password_hash FROM admin_users WHERE username = :u');
+        $stmt->execute(['u' => $username]);
+        $row = $stmt->fetch();
+    } catch (\Throwable $e) {
+        error_log('Admin login DB error: ' . $e->getMessage());
+        throw new RuntimeException('database unavailable', 0, $e);
+    }
 
     if ($row && password_verify($password, $row['password_hash'])) {
         admin_session_start();

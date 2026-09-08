@@ -3,27 +3,34 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 admin_require_login();
 
-$pdo = get_db();
+try {
+    $pdo = get_db();
 
-// Quick inline status update from the table.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['status'])) {
-    $id = (int)$_POST['id'];
-    $status = $_POST['status'];
-    if (in_array($status, ['Under Review', 'Approved', 'Rejected'], true)) {
-        $stmt = $pdo->prepare('UPDATE registrations SET status = :s WHERE id = :id');
-        $stmt->execute(['s' => $status, 'id' => $id]);
+    // Quick inline status update from the table.
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['status'])) {
+        $id = (int)$_POST['id'];
+        $status = $_POST['status'];
+        if (in_array($status, ['Under Review', 'Approved', 'Rejected'], true)) {
+            $stmt = $pdo->prepare('UPDATE registrations SET status = :s WHERE id = :id');
+            $stmt->execute(['s' => $status, 'id' => $id]);
+        }
+        header('Location: dashboard.php');
+        exit;
     }
-    header('Location: dashboard.php');
+
+    $rows = $pdo->query('SELECT id, child_name, parent1_name, parent1_mobile, parent1_email, package, status, submitted_at FROM registrations ORDER BY submitted_at DESC')->fetchAll();
+
+    $counts = ['Under Review' => 0, 'Approved' => 0, 'Rejected' => 0];
+    foreach ($pdo->query('SELECT status, COUNT(*) AS c FROM registrations GROUP BY status') as $row) {
+        $counts[$row['status']] = (int)$row['c'];
+    }
+    $total = array_sum($counts);
+} catch (\Throwable $e) {
+    error_log('Dashboard DB error: ' . $e->getMessage());
+    http_response_code(503);
+    echo '<p style="font-family:sans-serif;max-width:600px;margin:60px auto;text-align:center;">Unable to reach the database right now. Please try again shortly.</p>';
     exit;
 }
-
-$rows = $pdo->query('SELECT id, child_name, parent1_name, parent1_mobile, parent1_email, package, status, submitted_at FROM registrations ORDER BY submitted_at DESC')->fetchAll();
-
-$counts = ['Under Review' => 0, 'Approved' => 0, 'Rejected' => 0];
-foreach ($pdo->query('SELECT status, COUNT(*) AS c FROM registrations GROUP BY status') as $row) {
-    $counts[$row['status']] = (int)$row['c'];
-}
-$total = array_sum($counts);
 
 function h(?string $v): string { return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8'); }
 ?>
