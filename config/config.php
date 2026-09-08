@@ -4,19 +4,19 @@
 
 return [
     'db' => [
-        'host' => '127.0.0.1',
-        'name' => 'thegrove',
-        'user' => 'root',
-        'pass' => '',
+        'host' => 'localhost',
+        'name' => 'thegrovepk_db',
+        'user' => 'thegrovepk_user',
+        'pass' => 'Passw903rd',
         'charset' => 'utf8mb4',
     ],
 
     'mail' => [
-        'host' => 'sandbox.smtp.mailtrap.io',
-        'port' => 2525,
-        'username' => 'a8ac0d343aa7f3',
-        'password' => '1e8ff4ac452414',
-        'encryption' => 'tls',
+        'host' => 'mail.thegrove.pk',
+        'port' => 465,
+        'username' => 'registration@thegrove.pk',
+        'password' => 'Passw903rd',
+        'encryption' => 'ssl',
         'from_address' => 'registration@thegrove.pk',
         'from_name' => 'The Grove',
         'admin_notify_address' => 'registration@thegrove.pk',

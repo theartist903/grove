@@ -1,5 +1,6 @@
-CREATE DATABASE IF NOT EXISTS thegrove CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE thegrove;
+-- On production (cPanel), the database (thegrovepk_db) and user are already
+-- created and linked via the cPanel UI. Just import this file with that
+-- database selected in phpMyAdmin — no CREATE DATABASE/USE needed or permitted.
 
 CREATE TABLE IF NOT EXISTS registrations (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

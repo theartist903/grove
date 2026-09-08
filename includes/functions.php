@@ -83,8 +83,8 @@ function validate_registration(array $post): array
     $requireText('parent1_mobile', 'Parent/Guardian 1 mobile', 30);
     $email1 = trim((string)($post['parent1_email'] ?? ''));
     $clean['parent1_email'] = $email1;
-    if ($email1 === '' || !filter_var($email1, FILTER_VALIDATE_EMAIL)) {
-        $errors['parent1_email'] = 'A valid email is required for Parent/Guardian 1.';
+    if ($email1 !== '' && !filter_var($email1, FILTER_VALIDATE_EMAIL)) {
+        $errors['parent1_email'] = 'Enter a valid email for Parent/Guardian 1, or leave it blank.';
     }
 
     $clean['parent2_name'] = trim((string)($post['parent2_name'] ?? ''));

@@ -6,6 +6,7 @@ require_once __DIR__ . '/includes/functions.php';
 $errors = [];
 $clean = [];
 $submitted = false;
+$parentEmailSent = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = validate_registration($_POST);
@@ -56,18 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($params['days_required_arr']);
         $stmt->execute($params);
 
-        // Email to parent
-        $parentHtml = '<p>Dear ' . e($clean['parent1_name']) . ',</p>'
-            . '<p>Thank you for registering <strong>' . e($clean['child_name']) . '</strong> with The Grove.</p>'
-            . '<p>Your application is currently <strong>under review</strong>. Our team will get back to you shortly.</p>'
-            . '<p>Warm regards,<br>The Grove</p>';
-        send_mail($clean['parent1_email'], $clean['parent1_name'], 'Your registration is under review — The Grove', $parentHtml);
+        // Email to parent, only if they gave one
+        $parentEmailSent = false;
+        if ($clean['parent1_email'] !== '') {
+            $parentHtml = '<p>Dear ' . e($clean['parent1_name']) . ',</p>'
+                . '<p>Thank you for registering <strong>' . e($clean['child_name']) . '</strong> with The Grove.</p>'
+                . '<p>Your application is currently <strong>under review</strong>. Our team will get back to you shortly.</p>'
+                . '<p>Warm regards,<br>The Grove</p>';
+            $parentEmailSent = send_mail($clean['parent1_email'], $clean['parent1_name'], 'Your registration is under review — The Grove', $parentHtml);
+        }
 
         // Email to admin/registration inbox
         $config = require __DIR__ . '/config/config.php';
         $adminHtml = '<p>A new registration has been submitted.</p><ul>'
             . '<li><strong>Child:</strong> ' . e($clean['child_name']) . ' (DOB: ' . e($clean['child_dob']) . ')</li>'
-            . '<li><strong>Parent/Guardian 1:</strong> ' . e($clean['parent1_name']) . ' — ' . e($clean['parent1_mobile']) . ' — ' . e($clean['parent1_email']) . '</li>'
+            . '<li><strong>Parent/Guardian 1:</strong> ' . e($clean['parent1_name']) . ' — ' . e($clean['parent1_mobile']) . ' — ' . e($clean['parent1_email'] !== '' ? $clean['parent1_email'] : 'no email provided') . '</li>'
             . '<li><strong>Package:</strong> ' . e($clean['package']) . '</li>'
             . '<li><strong>Days:</strong> ' . e($clean['days_required']) . '</li>'
             . '</ul><p>Log in to the admin panel to view the full application.</p>';
@@ -117,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <?php if ($submitted): ?>
             <div class="alert alert-success" role="alert">
               <strong>Thank you!</strong> Your registration has been submitted and is now
-              <strong>under review</strong>. We've emailed you a confirmation.
+              <strong>under review</strong>.<?= $parentEmailSent ? " We've emailed you a confirmation." : '' ?>
             </div>
           <?php else: ?>
             <?php if (!empty($errors)): ?>
@@ -185,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <input type="text" name="parent2_mobile" class="form-control" value="<?= old($clean, 'parent2_mobile') ?>">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Email</label>
+                  <label class="form-label">Email <small class="text-muted">(optional)</small></label>
                   <input type="email" name="parent1_email" class="<?= field_class($errors, 'parent1_email') ?>" value="<?= old($clean, 'parent1_email') ?>">
                   <?= field_error($errors, 'parent1_email') ?>
                 </div>

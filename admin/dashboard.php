@@ -108,6 +108,15 @@ function h(?string $v): string { return htmlspecialchars($v ?? '', ENT_QUOTES, '
     </div>
 
     <div class="table-card">
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <label for="statusFilter" class="fw-bold mb-0">Filter by status:</label>
+        <select id="statusFilter" class="form-select form-select-sm" style="max-width: 220px;">
+          <option value="">All</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
       <table id="regTable" class="table table-striped table-hover align-middle" style="width:100%">
         <thead>
           <tr>
@@ -129,7 +138,7 @@ function h(?string $v): string { return htmlspecialchars($v ?? '', ENT_QUOTES, '
               <td><?= h($r['parent1_mobile']) ?></td>
               <td><?= h($r['parent1_email']) ?></td>
               <td><?= h($r['package']) ?></td>
-              <td>
+              <td data-status="<?= h($r['status']) ?>">
                 <form method="post" action="dashboard.php" class="d-flex align-items-center gap-1">
                   <input type="hidden" name="id" value="<?= (int)$r['id'] ?>">
                   <select name="status" class="form-select status-select" onchange="this.form.submit()">
@@ -152,11 +161,27 @@ function h(?string $v): string { return htmlspecialchars($v ?? '', ENT_QUOTES, '
   <script src="../assets/js/datatables.min.js"></script>
   <script>
     jQuery(function ($) {
-      $('#regTable').DataTable({
+      var table = $('#regTable').DataTable({
         order: [[6, 'desc']],
         responsive: false,
         pageLength: 10,
         language: { search: 'Search applications:' }
+      });
+
+      $.fn.dataTable.ext.search.push(function (settings, searchData, index, rowData, counter) {
+        if (settings.nTable.id !== 'regTable') {
+          return true;
+        }
+        var selected = $('#statusFilter').val();
+        if (!selected) {
+          return true;
+        }
+        var status = $(table.row(index).node()).find('td[data-status]').data('status');
+        return status === selected;
+      });
+
+      $('#statusFilter').on('change', function () {
+        table.draw();
       });
     });
   </script>
